@@ -193,78 +193,119 @@ class _ToolTipWidgetState extends State<ToolTipWidget> {
       paddingBottom = 10;
     }
 
+    final arrowWidth = 20.0;
+    final arrowHeight = 10.0;
+
     if (widget.container == null) {
-      return Stack(
-        children: <Widget>[
-          widget.showArrow! ? _getArrow(contentOffsetMultiplier) : Container(),
-          Positioned(
-            top: contentY,
-            left: _getLeft(),
-            right: _getRight(),
-            child: FractionalTranslation(
-              translation: Offset(0.0, contentFractionalOffset as double),
-              child: SlideTransition(
-                position: Tween<Offset>(
-                  begin: Offset(0.0, contentFractionalOffset / 10),
-                  end: Offset(0.0, 0.100),
-                ).animate(widget.animationOffset!),
-                child: Material(
-                  color: Colors.transparent,
-                  child: Container(
-                    padding:
-                        EdgeInsets.only(top: paddingTop, bottom: paddingBottom),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: GestureDetector(
-                        onTap: widget.onTooltipTap,
-                        child: Container(
-                          width: _getTooltipWidth(),
-                          padding: widget.contentPadding,
-                          color: widget.tooltipColor,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                child: Column(
-                                  crossAxisAlignment: widget.title != null
-                                      ? CrossAxisAlignment.start
-                                      : CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    widget.title != null
-                                        ? Text(
-                                            widget.title!,
-                                            style: widget.titleTextStyle ??
-                                                Theme.of(context)
-                                                    .textTheme
-                                                    .headline6!
-                                                    .merge(TextStyle(
-                                                        color:
-                                                            widget.textColor)),
-                                          )
-                                        : Container(),
-                                    Text(
-                                      widget.description!,
-                                      style: widget.descTextStyle ??
-                                          Theme.of(context)
-                                              .textTheme
-                                              .subtitle2!
-                                              .merge(TextStyle(
-                                                  color: widget.textColor)),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
+      return Positioned(
+        top: contentY,
+        left: _getLeft(),
+        right: _getRight(),
+        child: FractionalTranslation(
+          translation: Offset(0.0, contentFractionalOffset as double),
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: Offset(0.0, contentFractionalOffset / 10),
+              end: Offset(0.0, 0.100),
+            ).animate(widget.animationOffset!),
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding:
+                    EdgeInsets.only(top: paddingTop, bottom: paddingBottom),
+                child: Stack(
+                  alignment: ToolTipWidget.isArrowUp
+                      ? Alignment.topLeft
+                      : _getLeft() == null
+                          ? Alignment.bottomRight
+                          : Alignment.bottomLeft,
+                  children: [
+                    Positioned(
+                      left: _getLeft() == null
+                          ? null
+                          : (widget.position!.getCenter() -
+                              (arrowWidth / 2) -
+                              (_getLeft() ?? 0)),
+                      right: _getLeft() == null
+                          ? (MediaQuery.of(context).size.width -
+                                  widget.position!.getCenter()) -
+                              (_getRight() ?? 0) -
+                              (arrowWidth / 2)
+                          : null,
+                      child: CustomPaint(
+                        painter: Arrow(
+                          strokeColor: widget.tooltipColor!,
+                          strokeWidth: 10,
+                          paintingStyle: PaintingStyle.fill,
+                          isUpArrow: ToolTipWidget.isArrowUp,
+                        ),
+                        child: SizedBox(
+                          height: arrowHeight,
+                          width: arrowWidth,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: ToolTipWidget.isArrowUp ? arrowHeight - 1 : 0,
+                        bottom: ToolTipWidget.isArrowUp ? 0 : arrowHeight - 1,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: GestureDetector(
+                          onTap: widget.onTooltipTap,
+                          child: Container(
+                            width: _getTooltipWidth(),
+                            padding: widget.contentPadding,
+                            color: widget.tooltipColor,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  child: Column(
+                                    crossAxisAlignment: widget.title != null
+                                        ? CrossAxisAlignment.start
+                                        : CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      widget.title != null
+                                          ? Text(
+                                              widget.title!,
+                                              style: widget.titleTextStyle ??
+                                                  Theme.of(context)
+                                                      .textTheme
+                                                      .headline6!
+                                                      .merge(
+                                                        TextStyle(
+                                                          color:
+                                                              widget.textColor,
+                                                        ),
+                                                      ),
+                                            )
+                                          : Container(),
+                                      Text(
+                                        widget.description!,
+                                        style: widget.descTextStyle ??
+                                            Theme.of(context)
+                                                .textTheme
+                                                .subtitle2!
+                                                .merge(TextStyle(
+                                                    color: widget.textColor)),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),
-          )
-        ],
+          ),
+        ),
       );
     } else {
       return Stack(
@@ -320,21 +361,10 @@ class _ToolTipWidgetState extends State<ToolTipWidget> {
           ? widget.position!.getBottom()
           : widget.position!.getTop() - 1,
       left: widget.position!.getCenter() - 24,
-      child: FractionalTranslation(
-        translation: Offset(0.0, contentFractionalOffset),
-        child: SlideTransition(
-          position: Tween<Offset>(
-            begin: Offset(0.0, contentFractionalOffset / 5),
-            end: Offset(0.0, 0.150),
-          ).animate(widget.animationOffset!),
-          child: Icon(
-            ToolTipWidget.isArrowUp
-                ? Icons.arrow_drop_up
-                : Icons.arrow_drop_down,
-            color: widget.tooltipColor,
-            size: 50,
-          ),
-        ),
+      child: Icon(
+        ToolTipWidget.isArrowUp ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+        color: widget.tooltipColor,
+        size: 50,
       ),
     );
   }
@@ -348,5 +378,51 @@ class _ToolTipWidgetState extends State<ToolTipWidget> {
           ..layout())
         .size;
     return textPainter;
+  }
+}
+
+class Arrow extends CustomPainter {
+  final Color strokeColor;
+  final PaintingStyle paintingStyle;
+  final double strokeWidth;
+  final bool isUpArrow;
+
+  Arrow(
+      {this.strokeColor = Colors.black,
+      this.strokeWidth = 3,
+      this.paintingStyle = PaintingStyle.stroke,
+      this.isUpArrow = true});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = strokeColor
+      ..strokeWidth = strokeWidth
+      ..style = paintingStyle;
+
+    canvas.drawPath(getTrianglePath(size.width, size.height), paint);
+  }
+
+  Path getTrianglePath(double x, double y) {
+    if (isUpArrow) {
+      return Path()
+        ..moveTo(0, y)
+        ..lineTo(x / 2, 0)
+        ..lineTo(x, y)
+        ..lineTo(0, y);
+    } else {
+      return Path()
+        ..moveTo(0, 0)
+        ..lineTo(x, 0)
+        ..lineTo(x / 2, y)
+        ..lineTo(0, 0);
+    }
+  }
+
+  @override
+  bool shouldRepaint(Arrow oldDelegate) {
+    return oldDelegate.strokeColor != strokeColor ||
+        oldDelegate.paintingStyle != paintingStyle ||
+        oldDelegate.strokeWidth != strokeWidth;
   }
 }
