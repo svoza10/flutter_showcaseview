@@ -45,24 +45,31 @@ class ToolTipWidget extends StatefulWidget {
   static late bool isArrowUp;
   final VoidCallback? onTooltipTap;
   final EdgeInsets? contentPadding;
+  final double? topPosition;
+  final double? leftPosition;
+  final double? rightPosition;
 
-  ToolTipWidget(
-      {this.position,
-      this.offset,
-      this.screenSize,
-      this.title,
-      this.description,
-      this.animationOffset,
-      this.titleTextStyle,
-      this.descTextStyle,
-      this.container,
-      this.tooltipColor,
-      this.textColor,
-      this.showArrow,
-      this.contentHeight,
-      this.contentWidth,
-      this.onTooltipTap,
-      this.contentPadding = const EdgeInsets.symmetric(vertical: 8)});
+  ToolTipWidget({
+    this.position,
+    this.offset,
+    this.screenSize,
+    this.title,
+    this.description,
+    this.animationOffset,
+    this.titleTextStyle,
+    this.descTextStyle,
+    this.container,
+    this.tooltipColor,
+    this.textColor,
+    this.showArrow,
+    this.contentHeight,
+    this.contentWidth,
+    this.onTooltipTap,
+    this.contentPadding = const EdgeInsets.symmetric(vertical: 8),
+    this.topPosition,
+    this.leftPosition,
+    this.rightPosition,
+  });
 
   @override
   _ToolTipWidgetState createState() => _ToolTipWidgetState();
@@ -198,9 +205,9 @@ class _ToolTipWidgetState extends State<ToolTipWidget> {
         children: <Widget>[
           widget.showArrow! ? _getArrow(contentOffsetMultiplier) : Container(),
           Positioned(
-            top: contentY,
-            left: _getLeft(),
-            right: _getRight(),
+            top: widget.topPosition ?? contentY,
+            left: widget.leftPosition ?? _getLeft(),
+            right: widget.rightPosition ?? _getRight(),
             child: FractionalTranslation(
               translation: Offset(0.0, contentFractionalOffset as double),
               child: SlideTransition(

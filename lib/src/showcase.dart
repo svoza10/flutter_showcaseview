@@ -57,30 +57,36 @@ class Showcase extends StatefulWidget {
   final bool? disposeOnTap;
   final bool disableAnimation;
   final EdgeInsets overlayPadding;
+  final double? topPosition;
+  final double? leftPosition;
+  final double? rightPosition;
 
-  const Showcase(
-      {required this.key,
-      required this.child,
-      this.title,
-      required this.description,
-      this.shapeBorder,
-      this.overlayColor = Colors.black,
-      this.overlayOpacity = 0.75,
-      this.titleTextStyle,
-      this.descTextStyle,
-      this.showcaseBackgroundColor = Colors.white,
-      this.textColor = Colors.black,
-      this.showArrow = true,
-      this.onTargetClick,
-      this.disposeOnTap,
-      this.animationDuration = const Duration(milliseconds: 2000),
-      this.disableAnimation = false,
-      this.contentPadding =
-          const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-      this.onToolTipClick,
-      this.onScreenClick,
-      this.overlayPadding = EdgeInsets.zero})
-      : height = null,
+  const Showcase({
+    required this.key,
+    required this.child,
+    this.title,
+    required this.description,
+    this.shapeBorder,
+    this.overlayColor = Colors.black,
+    this.overlayOpacity = 0.75,
+    this.titleTextStyle,
+    this.descTextStyle,
+    this.showcaseBackgroundColor = Colors.white,
+    this.textColor = Colors.black,
+    this.showArrow = true,
+    this.onTargetClick,
+    this.disposeOnTap,
+    this.animationDuration = const Duration(milliseconds: 2000),
+    this.disableAnimation = false,
+    this.contentPadding =
+        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+    this.onToolTipClick,
+    this.onScreenClick,
+    this.overlayPadding = EdgeInsets.zero,
+    this.topPosition,
+    this.leftPosition,
+    this.rightPosition,
+  })  : height = null,
         width = null,
         container = null,
         assert(overlayOpacity >= 0.0 && overlayOpacity <= 1.0,
@@ -118,6 +124,9 @@ class Showcase extends StatefulWidget {
     this.disableAnimation = false,
     this.contentPadding = const EdgeInsets.symmetric(vertical: 8),
     this.overlayPadding = EdgeInsets.zero,
+    this.topPosition,
+    this.leftPosition,
+    this.rightPosition,
   })  : showArrow = false,
         onToolTipClick = null,
         assert(overlayOpacity >= 0.0 && overlayOpacity <= 1.0,
@@ -279,6 +288,9 @@ class _ShowcaseState extends State<Showcase> with TickerProviderStateMixin {
             ),
             ToolTipWidget(
               position: position,
+              topPosition: widget.topPosition,
+              leftPosition: widget.leftPosition,
+              rightPosition: widget.rightPosition,
               offset: offset,
               screenSize: screenSize,
               title: widget.title,
