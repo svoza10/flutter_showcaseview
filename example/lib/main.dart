@@ -161,6 +161,7 @@ class _MailPageState extends State<MailPage> {
                                   children: <Widget>[
                                     Showcase(
                                       key: _one,
+                                      disableAnimation: true,
                                       description: 'Tap to see menu options',
                                       child: Icon(
                                         Icons.menu,

@@ -210,7 +210,9 @@ class _ShowcaseState extends State<Showcase> with TickerProviderStateMixin {
     });
 
     if (activeStep == widget.key) {
-      _slideAnimationController.forward();
+      if (!widget.disableAnimation) {
+        _slideAnimationController.forward();
+      }
       if (ShowCaseWidget.of(context)!.autoPlay) {
         timer = Timer(
             Duration(
@@ -321,9 +323,9 @@ class _ShowcaseState extends State<Showcase> with TickerProviderStateMixin {
               ),
               ToolTipWidget(
                 position: position,
-              topPosition: widget.topPosition,
-              leftPosition: widget.leftPosition,
-              rightPosition: widget.rightPosition,
+                topPosition: widget.topPosition,
+                leftPosition: widget.leftPosition,
+                rightPosition: widget.rightPosition,
                 offset: offset,
                 screenSize: screenSize,
                 title: widget.title,
