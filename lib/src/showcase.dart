@@ -63,6 +63,7 @@ class Showcase extends StatefulWidget {
   final double? topPosition;
   final double? leftPosition;
   final double? rightPosition;
+  final Widget? bottomWidget;
 
   /// Defines blur value.
   /// This will blur the background while displaying showcase.
@@ -99,6 +100,7 @@ class Showcase extends StatefulWidget {
     this.topPosition,
     this.leftPosition,
     this.rightPosition,
+    this.bottomWidget,
   })  : height = null,
         width = null,
         container = null,
@@ -142,6 +144,7 @@ class Showcase extends StatefulWidget {
     this.topPosition,
     this.leftPosition,
     this.rightPosition,
+    this.bottomWidget,
   })  : showArrow = false,
         onToolTipClick = null,
         assert(overlayOpacity >= 0.0 && overlayOpacity <= 1.0,
@@ -342,6 +345,7 @@ class _ShowcaseState extends State<Showcase> with TickerProviderStateMixin {
                 onTooltipTap: _getOnTooltipTap,
                 contentPadding: widget.contentPadding,
               ),
+              if (widget.bottomWidget != null) widget.bottomWidget!,
             ],
           )
         : SizedBox.shrink();
