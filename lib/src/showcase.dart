@@ -318,6 +318,7 @@ class _ShowcaseState extends State<Showcase> with TickerProviderStateMixin {
                         ),
                 ),
               ),
+              if (widget.bottomWidget != null) widget.bottomWidget!,
               _TargetWidget(
                 offset: offset,
                 size: size,
@@ -345,7 +346,6 @@ class _ShowcaseState extends State<Showcase> with TickerProviderStateMixin {
                 onTooltipTap: _getOnTooltipTap,
                 contentPadding: widget.contentPadding,
               ),
-              if (widget.bottomWidget != null) widget.bottomWidget!,
             ],
           )
         : SizedBox.shrink();
