@@ -187,7 +187,7 @@ class _ToolTipWidgetState extends State<ToolTipWidget> {
 
     final contentY = ToolTipWidget.isArrowUp
         ? widget.position!.getBottom() + (contentOffsetMultiplier * 3)
-        : widget.position!.getTop() + (contentOffsetMultiplier * 3);
+        : widget.position!.getTop() + (contentOffsetMultiplier * 3) + 30;
 
     final num contentFractionalOffset =
         contentOffsetMultiplier.clamp(-1.0, 0.0);
