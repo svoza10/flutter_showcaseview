@@ -22,6 +22,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'extension.dart';
 import 'showcase_widget.dart';
 
 /// Displays an overlay Widget anchored directly above the center of this
@@ -124,22 +125,23 @@ class _OverlayBuilderState extends State<OverlayBuilder> {
     super.initState();
 
     if (widget.showOverlay) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) => showOverlay());
+      ambiguate(WidgetsBinding.instance)
+          ?.addPostFrameCallback((_) => showOverlay());
     }
   }
 
   @override
   void didUpdateWidget(OverlayBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
-    WidgetsBinding.instance!
-        .addPostFrameCallback((_) => syncWidgetAndOverlay());
+    ambiguate(WidgetsBinding.instance)
+        ?.addPostFrameCallback((_) => syncWidgetAndOverlay());
   }
 
   @override
   void reassemble() {
     super.reassemble();
-    WidgetsBinding.instance!
-        .addPostFrameCallback((_) => syncWidgetAndOverlay());
+    ambiguate(WidgetsBinding.instance)
+        ?.addPostFrameCallback((_) => syncWidgetAndOverlay());
   }
 
   @override
@@ -167,12 +169,14 @@ class _OverlayBuilderState extends State<OverlayBuilder> {
   }
 
   void addToOverlay(OverlayEntry overlayEntry) async {
-    if (ShowCaseWidget.of(context)?.context != null &&
-        Overlay.of(ShowCaseWidget.of(context)!.context) != null) {
-      Overlay.of(ShowCaseWidget.of(context)!.context)!.insert(overlayEntry);
-    } else {
-      if (Overlay.of(context) != null) {
-        Overlay.of(context)!.insert(overlayEntry);
+    final showCaseContext = ShowCaseWidget.of(context).context;
+    if (mounted) {
+      if (Overlay.of(showCaseContext) != null) {
+        Overlay.of(showCaseContext)!.insert(overlayEntry);
+      } else {
+        if (Overlay.of(context) != null) {
+          Overlay.of(context)!.insert(overlayEntry);
+        }
       }
     }
   }
@@ -193,8 +197,8 @@ class _OverlayBuilderState extends State<OverlayBuilder> {
   }
 
   void buildOverlay() async {
-    WidgetsBinding.instance!
-        .addPostFrameCallback((_) => _overlayEntry?.markNeedsBuild());
+    ambiguate(WidgetsBinding.instance)
+        ?.addPostFrameCallback((_) => _overlayEntry?.markNeedsBuild());
   }
 
   @override

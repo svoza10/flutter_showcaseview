@@ -20,8 +20,6 @@
  * SOFTWARE.
  */
 
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../showcaseview.dart';
@@ -34,12 +32,15 @@ class ShowCaseWidget extends StatefulWidget {
   final bool autoPlay;
   final Duration autoPlayDelay;
   final bool autoPlayLockEnable;
+  final bool disableAnimation;
+  final Duration scrollDuration;
 
   /// Default overlay blur used by showcase. if [Showcase.blurValue]
   /// is not provided.
   ///
   /// Default value is 0.
   final double blurValue;
+  final bool enableAutoScroll;
 
   const ShowCaseWidget({
     required this.builder,
@@ -50,6 +51,9 @@ class ShowCaseWidget extends StatefulWidget {
     this.autoPlayDelay = const Duration(milliseconds: 2000),
     this.autoPlayLockEnable = false,
     this.blurValue = 0,
+    this.scrollDuration = const Duration(milliseconds: 300),
+    this.disableAnimation = false,
+    this.enableAutoScroll = false,
   });
 
   static GlobalKey? activeTargetWidget(BuildContext context) {
@@ -58,10 +62,10 @@ class ShowCaseWidget extends StatefulWidget {
         ?.activeWidgetIds;
   }
 
-  static ShowCaseWidgetState? of(BuildContext context) {
+  static ShowCaseWidgetState of(BuildContext context) {
     final state = context.findAncestorStateOfType<ShowCaseWidgetState>();
     if (state != null) {
-      return context.findAncestorStateOfType<ShowCaseWidgetState>();
+      return state;
     } else {
       throw Exception('Please provide ShowCaseView context');
     }
@@ -75,8 +79,10 @@ class ShowCaseWidgetState extends State<ShowCaseWidget> {
   List<GlobalKey>? ids;
   int? activeWidgetId;
   late bool autoPlay;
+  late bool disableAnimation;
   late Duration autoPlayDelay;
   late bool autoPlayLockEnable;
+  late bool enableAutoScroll;
 
   /// Returns value of  [ShowCaseWidget.blurValue]
   double get blurValue => widget.blurValue;
@@ -86,7 +92,9 @@ class ShowCaseWidgetState extends State<ShowCaseWidget> {
     super.initState();
     autoPlayDelay = widget.autoPlayDelay;
     autoPlay = widget.autoPlay;
+    disableAnimation = widget.disableAnimation;
     autoPlayLockEnable = widget.autoPlayLockEnable;
+    enableAutoScroll = widget.enableAutoScroll;
   }
 
   void startShowCase(List<GlobalKey> widgetIds) {
@@ -106,6 +114,39 @@ class ShowCaseWidgetState extends State<ShowCaseWidget> {
         activeWidgetId = activeWidgetId! + 1;
         _onStart();
 
+        if (activeWidgetId! >= ids!.length) {
+          _cleanupAfterSteps();
+          if (widget.onFinish != null) {
+            widget.onFinish!();
+          }
+        }
+      });
+    }
+  }
+
+  void next() {
+    if (ids != null && mounted) {
+      setState(() {
+        _onComplete();
+        activeWidgetId = activeWidgetId! + 1;
+        _onStart();
+
+        if (activeWidgetId! >= ids!.length) {
+          _cleanupAfterSteps();
+          if (widget.onFinish != null) {
+            widget.onFinish!();
+          }
+        }
+      });
+    }
+  }
+
+  void previous() {
+    if (ids != null && ((activeWidgetId ?? 0) - 1) >= 0 && mounted) {
+      setState(() {
+        _onComplete();
+        activeWidgetId = activeWidgetId! - 1;
+        _onStart();
         if (activeWidgetId! >= ids!.length) {
           _cleanupAfterSteps();
           if (widget.onFinish != null) {

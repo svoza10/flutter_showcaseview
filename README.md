@@ -113,6 +113,20 @@ ShowCaseWidget(
 ),
 ```
 
+8. Go to next `ShowCase`
+```dart
+someEvent(){
+  ShowCaseWidget.of(context).next();
+}
+```
+
+9. Go to previous `ShowCase`
+```dart
+someEvent(){
+  ShowCaseWidget.of(context).previous();
+}
+```
+
 If you want to start the `ShowCaseView` as soon as your UI built up then use below code.
 
 ```dart
@@ -125,6 +139,45 @@ WidgetsBinding.instance.addPostFrameCallback((_) =>
 
 Check out the **example** app in the [example](example) directory or the 'Example' tab on pub.dartlang.org for a more complete example.
 
+## Scrolling to active showcase
+
+Scrolling to active showcase feature will not work properly in scroll views that renders widgets on demand(ex, ListView, GridView).
+
+In order to scroll to a widget it needs to be attached with widget tree. So, If you are using a scrollview that renders widgets on demand, it is possible that the widget on which showcase is applied is not attached in widget tree. So, flutter won't be able to scroll to that widget.
+
+So, If you want to make a scroll view that contains less number of children widget then prefer to use SingleChildScrollView.
+
+If using SingleChildScrollView is not an option, then you can assign a ScrollController to that scrollview and manually scroll to the position where showcase widget gets rendered. You can add that code in onStart method of `ShowCaseWidget`.
+
+Example,
+
+```dart
+// This controller will be assigned to respected sctollview.
+final _controller = ScrollController();
+
+ShowCaseWidget(
+  onStart: (index, key) {
+    if(index == 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+       // If showcase widget is at offset 1000 in the listview.
+       // If you don't know the exact position of the showcase widget,
+       // You can provide nearest possible location.
+       // 
+       // In this case providing 990 instead of 1000 will work as well.
+        _controller.jumpTo(1000);
+      });
+    }
+  },
+);
+```
+
+## Enable Auto Scrolling
+By default, auto-scrolling behavior is off, you can enable it by setting ``enableAutoScroll`` flag to true in ``showCaseWidget``.
+```dart
+ShowCaseWidget(
+  enableAutoScroll: true,
+);
+```
 
 ## Main Contributors
 
@@ -135,9 +188,11 @@ Check out the **example** app in the [example](example) directory or the 'Exampl
     <td align="center"><a href="https://github.com/AnkitPanchal10"><img src="https://avatars.githubusercontent.com/u/38405884?s=100" width="100px;" alt=""/><br /><sub><b>Ankit Panchal</b></sub></a></td>
     <td align="center"><a href="https://github.com/Kashifalaliwala"><img src="https://avatars.githubusercontent.com/u/30998350?s=100" width="100px;" alt=""/><br /><sub><b>Kashifa Laliwala</b></sub></a></td>
      <td align="center"><a href="https://github.com/vatsaltanna"><img src="https://avatars.githubusercontent.com/u/25323183?s=100" width="100px;" alt=""/><br /><sub><b>Vatsal Tanna</b></sub></a></td>
+     <td align="center"><a href="https://github.com/sanket-simform"><img src="https://avatars.githubusercontent.com/u/65167856?v=4" width="100px;" alt=""/><br /><sub><b>Sanket Kachhela</b></sub></a></td>
+     <td align="center"><a href="https://github.com/ParthBaraiya"><img src="https://avatars.githubusercontent.com/u/36261739?v=4" width="100px;" alt=""/><br /><sub><b>Parth Baraiya</b></sub></a></td>
+          <td align="center"><a href="https://github.com/ShwetaChauhan18"><img src="https://avatars.githubusercontent.com/u/34509457" width="80px;" alt=""/><br /><sub><b>Shweta Chauhan</b></sub></a></td>
   </tr>
 </table>
-<br/>
 
 ## Note
 
